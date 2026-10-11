@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.env
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Data and results
+data/*
+!data/README.md
+results/*
+
+# OS files
+.DS_Store
