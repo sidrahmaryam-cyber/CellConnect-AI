@@ -11,11 +11,13 @@ def answer_research_question(question: str) -> str:
 
     evidence = "\n\n".join(
         f"Title: {paper['title']}\n"
+        f"Journal: {paper['journal']} ({paper['year']})\n"
         f"PMID: {paper['pmid']}\n"
         f"URL: {paper['url']}\n"
         f"Abstract: {paper['abstract']}"
         for paper in papers
     )
+
 
     prompt = f"""
 Answer the biomedical research question using the PubMed evidence below.

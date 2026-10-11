@@ -30,26 +30,38 @@ def search_pubmed(query: str, max_results: int = 5) -> list[dict]:
     ) as handle:
         papers = Entrez.read(handle)
 
+    
     results = []
 
     for paper in papers["PubmedArticle"]:
-        article = paper["MedlineCitation"]["Article"]
+        citation = paper["MedlineCitation"]
+        article = citation["Article"]
 
         title = str(article.get("ArticleTitle", "No title"))
         abstract_parts = article.get("Abstract", {}).get("AbstractText", [])
         abstract = " ".join(str(part) for part in abstract_parts)
 
+        journal = str(
+            article.get("Journal", {}).get("Title", "Unknown journal")
+        )
+
+        pub_date = article.get("Journal", {}).get(
+            "JournalIssue", {}
+        ).get("PubDate", {})
+
+        year = str(pub_date.get("Year", "Unknown year"))
+
         results.append({
             "title": title,
             "abstract": abstract,
-            "pmid": str(paper["MedlineCitation"]["PMID"]),
-            "url": (
-                "https://pubmed.ncbi.nlm.nih.gov/"
-                f"{paper['MedlineCitation']['PMID']}/"
-            ),
+            "pmid": str(citation["PMID"]),
+            "journal": journal,
+            "year": year,
+            "url": f"https://pubmed.ncbi.nlm.nih.gov/{citation['PMID']}/",
         })
 
     return results
+
 
 
 if __name__ == "__main__":
@@ -58,5 +70,7 @@ if __name__ == "__main__":
     for paper in papers:
         print(f"\nTitle: {paper['title']}")
         print(f"PMID: {paper['pmid']}")
+        print(f"Journal: {paper['journal']}")
+        print(f"Year: {paper['year']}")
         print(f"URL: {paper['url']}")
         print(f"Abstract: {paper['abstract'][:300]}...")
